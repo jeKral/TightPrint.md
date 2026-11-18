@@ -20,12 +20,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - run: npm ci
 
       - name: Ověř, že commity od posledního tagu dodržují Conventional Commits
-        run: npx commitlint --from "$(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~20)" --to HEAD
+        run: npx commitlint --from "$(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)" --to HEAD
 
       - run: npm run typecheck
       - run: npm run smoke
