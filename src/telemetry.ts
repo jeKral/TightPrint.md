@@ -4,8 +4,9 @@ import { getConfig, saveConfig } from './config';
 /** Název macOS Služby (Shortcut "Quick Action"), kterou si uživatel jednou nainstaluje. */
 const RELAY_SERVICE = 'TightPrint Relay';
 
-/** Kolik znaků verze pluginu posíláme — udržuje se ručně v souladu s package.json. */
-const PLUGIN_VERSION = '1.0.0';
+/** Vkládá vite při buildu (define v vite.config.mts) přímo z package.json. */
+declare const __PLUGIN_VERSION__: string;
+const PLUGIN_VERSION = __PLUGIN_VERSION__;
 
 function randomId(): string {
   // Jednoduché, dostatečně náhodné UUID-like ID; nejde o kryptografický klíč.
