@@ -24,6 +24,8 @@
   "menu.tableBorder": "Table border",
   "menu.tableBorder.none": "No border",
   "menu.tableBorder.other": "Other…",
+  "menu.telemetry": "Anonymous statistics",
+  "menu.reportBug": "Report a bug…",
   "density.normal": "Normal",
   "density.compact": "Compact",
   "density.maximum": "Maximum",
@@ -46,5 +48,14 @@
   "dialog.askTableBorder.title": "Table border width (pt)?",
   "dialog.askTableBorder.placeholder": "e.g. 0.5, or 0 = no border",
   "dialog.askTableBorder.invalid": "Enter a number from 0 to 3.",
+  "dialog.telemetryAsk.title": "Anonymous statistics",
+  "dialog.telemetryAsk.message": "TightPrint.md can send anonymized statistics (version, chosen density, page count) — never document content or anything tied to you. It only goes out through a one-time macOS Shortcut you approve yourself. See docs/PRIVACY.md for details. Turn it on? You can change this anytime in Print settings.",
+  "dialog.telemetryAsk.enable": "Turn on",
+  "dialog.telemetryAsk.disable": "Keep it off",
+  "dialog.reportBug.title": "What happened?",
+  "dialog.reportBug.placeholder": "Short description (optional, system info is added automatically)",
+  "dialog.reportBug.sent": "Thanks, the report was sent.",
+  "dialog.reportBug.failed.title": "Couldn't send it",
+  "dialog.reportBug.failed.message": "The relay Shortcut probably isn't installed yet — see docs/SHORTCUT-SETUP.md.",
   "file.untitled": "Untitled"
 }

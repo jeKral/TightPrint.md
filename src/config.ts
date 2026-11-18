@@ -19,6 +19,12 @@ export interface ExtensionConfig {
   fontSizeOverride?: number;
   /** Síla rámečku/mřížky tabulek v pt. */
   tableBorderWidth?: number;
+  /** Souhlas s anonymizovanou telemetrií (viz docs/PRIVACY.md); výchozí = vypnuto (opt-in). */
+  telemetryEnabled?: boolean;
+  /** Jednorázová otázka na zapnutí telemetrie už byla zobrazena. */
+  telemetryAsked?: boolean;
+  /** Náhodné ID generované lokálně při prvním zapnutí telemetrie; nevázané na osobu/soubor. */
+  anonId?: string;
 }
 
 export const DEFAULTS = {
@@ -29,6 +35,8 @@ export const DEFAULTS = {
   language: undefined as string | undefined,
   fontSizeOverride: undefined as number | undefined,
   tableBorderWidth: 0.5,
+  telemetryEnabled: false,
+  telemetryAsked: false,
 } as const;
 
 const configPath = (): string =>

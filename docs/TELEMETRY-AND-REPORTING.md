@@ -38,12 +38,16 @@ MarkEdit plugin                 macOS Shortcut             backend (roztisk-srvr
 ### Instalace Shortcutu — jednorázová, ne skrytá
 
 Nedá se zaregistrovat služba do Services menu bez potvrzení uživatele (macOS to z bezpečnostních
-důvodů nedovolí udělat potichu) — ani kdyby to chtěl plugin udělat sám. Řešení: `install-script`
-otevře `.shortcut` soubor (`open shortcuts/tightprint-relay.shortcut`), čímž spustí standardní
-dialog Zkratek "Přidat zkratku", a README/první spuštění pluginu o tom jednou informuje. Po téhle
-jediné instalaci už žádná další interakce není potřeba — `runService` dál běží tiše na pozadí.
-To je smysl slova "nenápadné", jak ho stavím: **po jednorázovém a viditelném souhlasu** beze
-rušení, ne bez vědomí uživatele.
+důvodů nedovolí udělat potichu) — ani kdyby to chtěl plugin udělat sám. Řešení: uživatel si
+jednou ručně vytvoří Zkratku "TightPrint Relay" podle přesného návodu v
+`docs/SHORTCUT-SETUP.md` (krok za krokem v macOS Zkratkách). Po téhle jediné instalaci už žádná
+další interakce není potřeba — `runService` dál běží tiše na pozadí. To je smysl slova
+"nenápadné", jak ho stavím: **po jednorázovém a viditelném souhlasu** beze rušení, ne bez
+vědomí uživatele.
+
+Pozn.: `.shortcut` binární soubor nejde vygenerovat mimo macOS (tenhle projekt se vyvíjí
+na Linuxu), takže ho nedodáváme hotový — proto manuální návod, ne `open
+shortcuts/tightprint-relay.shortcut`.
 
 **Hlášení chyb bez registrace na GitHub se tímhle řeší přesně podle zadání** — uživatel nikdy
 neuvidí GitHub, token drží jen náš backend.
@@ -76,15 +80,24 @@ neuvidí GitHub, token drží jen náš backend.
 ČR/EU → GDPR: i anonymizovaná telemetrie, kterou plugin posílá automaticky, musí být uživateli
 sdělená a musí jít vypnout. Plně skrytý, neohlášený sběr dat bych nestavěl ani technicky
 proveditelný (viz výše — síť nejde vůbec bez jednorázového instalačního kroku, který *je* tím
-oznámením). Návrh: v menu "TightPrint.md" položka **Anonymní statistiky: zapnuto/vypnuto**
-(výchozí stav k doladění — doporučuju zapnuto s jasnou zmínkou v README a při prvním spuštění,
-ne skryté v nastavení), plus `docs/PRIVACY.md` popisující přesně co se posílá.
+oznámením). Implementováno: v menu "TightPrint.md" ▸ Nastavení tisku je přepínač **Anonymní statistiky**,
+a při prvním spuštění pluginu se zobrazí jednorázový dialog s otázkou (viz
+`dialog.telemetryAsk.*` v `src/locales/`). **Výchozí stav je VYPNUTO (opt-in)** —
+`DEFAULTS.telemetryEnabled: false` v `src/config.ts` — tedy přísnější varianta, než tento
+dokument původně navrhoval ("doporučuju zapnuto"). Opt-in bez nutnosti cokoliv nastavovat je
+bezpečnější výchozí hodnota pro první veřejné vydání; pokud by nízká účast na statistikách
+vadila, lze to kdykoliv změnit v `DEFAULTS` a v textu dialogu — je to jedna čísla/boolean, ne
+architektonická změna.
 
-## Co zbývá rozhodnout / udělat
+## Co zbývá udělat
 
-1. **Přístup k roztisk-srvr** pro nasazení backendu — viz otázka v chatu. Bez něj umím připravit
-   kód backendu i Shortcut, ale nic nenasadím.
-2. Doménu/subdoménu pro endpoint (např. `tightprint.roztisk.cz`) a TLS.
-3. GitHub token pro backend — vytvořit fine-grained PAT jen pro `jeKral/TightPrint.md`, scope
-   `Issues: write`, nic víc.
-4. Schválit výchozí stav telemetrie (zapnuto/vypnuto) a přesné znění oznámení.
+1. **Nasazení backendu na roztisk-srvr** — kód je hotový v `backend/` (Express + Postgres,
+   `POST /report` → GitHub Issues, `POST /stat` → DB pro Grafanu), viz `backend/README.md`
+   pro přesné kroky nasazení (`docker compose up -d --build`, napojení na existující reverzní
+   proxy pro TLS/subdomenu).
+2. GitHub token pro backend — vytvořit fine-grained PAT jen pro `jeKral/TightPrint.md`, scope
+   `Issues: write`, nic víc, vložit do `backend/.env`.
+3. Vybranou veřejnou URL backendu (např. `https://tightprint-relay.roztisk.cz`) zadat do kroku
+   "Get Contents of URL" při ruční tvorbě Zkratky — návod v `docs/SHORTCUT-SETUP.md`.
+4. Po nasazení ověřit end-to-end: zapnout telemetrii v pluginu, udělat export, zkontrolovat
+   řádek v tabulce `stats`; zavolat "Nahlaš chybu…" a zkontrolovat, že vznikl GitHub issue.

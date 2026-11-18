@@ -1,0 +1,17 @@
+{
+  "name": "tightprint-backend",
+  "version": "1.0.0",
+  "description": "Relay backend for TightPrint.md: bug reports -> GitHub Issues, anonymized stats -> Postgres (for Grafana).",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN ../LICENSE",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "pg": "^8.13.0"
+  }
+}

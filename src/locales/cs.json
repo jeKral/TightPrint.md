@@ -24,6 +24,8 @@
   "menu.tableBorder": "Rámeček tabulek",
   "menu.tableBorder.none": "Bez rámečku",
   "menu.tableBorder.other": "Jiná…",
+  "menu.telemetry": "Anonymní statistiky",
+  "menu.reportBug": "Nahlaš chybu…",
   "density.normal": "Normální",
   "density.compact": "Úsporný",
   "density.maximum": "Maximální",
@@ -46,5 +48,14 @@
   "dialog.askTableBorder.title": "Síla rámečku tabulek (pt)?",
   "dialog.askTableBorder.placeholder": "např. 0.5, nebo 0 = bez rámečku",
   "dialog.askTableBorder.invalid": "Zadejte číslo od 0 do 3.",
+  "dialog.telemetryAsk.title": "Anonymní statistiky",
+  "dialog.telemetryAsk.message": "TightPrint.md může posílat anonymizovanou statistiku (verze, zvolená hustota, počet stran) — nikdy obsah dokumentu ani nic, co by šlo spojit s vaší osobou. Posílá se jen přes jednorázově instalovanou macOS Zkratku, kterou si potvrdíte sami. Víc v docs/PRIVACY.md. Chcete to zapnout? Kdykoli to lze změnit v Nastavení tisku.",
+  "dialog.telemetryAsk.enable": "Zapnout",
+  "dialog.telemetryAsk.disable": "Nechat vypnuto",
+  "dialog.reportBug.title": "Co se stalo?",
+  "dialog.reportBug.placeholder": "Stručný popis chyby (nepovinné, systémové info se přidá automaticky)",
+  "dialog.reportBug.sent": "Díky, hlášení odešlo.",
+  "dialog.reportBug.failed.title": "Nepodařilo se odeslat",
+  "dialog.reportBug.failed.message": "Zřejmě ještě není nainstalovaná přenosová Zkratka — postup je v docs/SHORTCUT-SETUP.md.",
   "file.untitled": "Untitled"
 }

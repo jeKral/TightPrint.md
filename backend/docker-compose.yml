@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tightprint
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?nastav POSTGRES_PASSWORD v .env}
+      POSTGRES_DB: tightprint
+    volumes:
+      - tightprint-db-data:/var/lib/postgresql/data
+    # Odkomentuj, pokud chceš sáhnout na DB zvenku (např. z existující Grafany mimo tento compose):
+    # ports:
+    #   - "127.0.0.1:5433:5432"
+
+  backend:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PORT: 8787
+      DATABASE_URL: postgres://tightprint:${POSTGRES_PASSWORD:?nastav POSTGRES_PASSWORD v .env}@db:5432/tightprint
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?nastav fine-grained PAT jen pro tento repo, scope Issues:write}
+      GITHUB_REPO: ${GITHUB_REPO:-jeKral/TightPrint.md}
+    ports:
+      - "127.0.0.1:8787:8787"
+    # Port je jen na localhost — na veřejný internet (https://tightprint.roztisk.cz/…) ho
+    # pouští existující reverzní proxy (Caddy/Nginx/Traefik) na roztisk-srvr, ne tenhle compose.
+
+volumes:
+  tightprint-db-data:

@@ -9,6 +9,7 @@ import { PRESETS, densityAt, fitToPages } from './density';
 import { scanFontFamilies, loadFontFamily, isLikelyMonospace } from './fonts';
 import type { FontFamily } from './fonts';
 import { LOCALES, t, tn, setLocale } from './i18n';
+import { sendStat, reportBug } from './telemetry';
 
 let busy = false;
 
@@ -28,6 +29,7 @@ const cfg = () => {
     language: c.language ?? DEFAULTS.language,
     fontSizeOverride: c.fontSizeOverride ?? DEFAULTS.fontSizeOverride,
     tableBorderWidth: c.tableBorderWidth ?? DEFAULTS.tableBorderWidth,
+    telemetryEnabled: c.telemetryEnabled ?? DEFAULTS.telemetryEnabled,
   };
 };
 
@@ -117,6 +119,7 @@ async function exportPdf(mode: 'save' | 'print'): Promise<void> {
     if (mode === 'print') {
       if (typeof MarkEdit.showPrintPanel === 'function') {
         await MarkEdit.showPrintPanel({ type: 'pdf', data: result.data, title: result.baseName });
+        void sendStat('export', { pages: result.pages, density: cfg().t, mode });
         return;
       }
       await MarkEdit.showAlert({
@@ -125,6 +128,7 @@ async function exportPdf(mode: 'save' | 'print'): Promise<void> {
       });
     }
     await MarkEdit.showSavePanel({ data: result.data, fileName: `${result.baseName}.pdf` });
+    void sendStat('export', { pages: result.pages, density: cfg().t, mode });
   } catch (error) {
     await MarkEdit.showAlert({
       title: t('dialog.exportFailed.title'),
@@ -204,6 +208,38 @@ async function askTableBorder(): Promise<void> {
     await saveConfig({ tableBorderWidth: n });
   } else {
     await MarkEdit.showAlert(t('dialog.askTableBorder.invalid'));
+  }
+}
+
+async function askReportBug(): Promise<void> {
+  const description = await MarkEdit.showTextBox({
+    title: t('dialog.reportBug.title'),
+    placeholder: t('dialog.reportBug.placeholder'),
+  });
+  if (description === undefined) {
+    return;
+  }
+  const ok = await reportBug(description.trim());
+  await MarkEdit.showAlert(
+    ok
+      ? t('dialog.reportBug.sent')
+      : { title: t('dialog.reportBug.failed.title'), message: t('dialog.reportBug.failed.message') },
+  );
+}
+
+/** Jednorázová otázka při prvním spuštění; dál jen přepínač v nastavení. */
+async function askTelemetryOnce(): Promise<void> {
+  if (getConfig().telemetryAsked ?? DEFAULTS.telemetryAsked) {
+    return;
+  }
+  const choice = await MarkEdit.showAlert({
+    title: t('dialog.telemetryAsk.title'),
+    message: t('dialog.telemetryAsk.message'),
+    buttons: [t('dialog.telemetryAsk.enable'), t('dialog.telemetryAsk.disable')],
+  });
+  await saveConfig({ telemetryEnabled: choice === 0, telemetryAsked: true });
+  if (choice === 0) {
+    void sendStat('install');
   }
 }
 
@@ -331,6 +367,11 @@ function settingsMenuItems(): MenuItem[] {
       state: () => ({ isSelected: cfg().footer }),
       action: sticky(() => saveConfig({ footer: !cfg().footer })),
     },
+    {
+      title: t('menu.telemetry'),
+      state: () => ({ isSelected: cfg().telemetryEnabled }),
+      action: sticky(() => saveConfig({ telemetryEnabled: !cfg().telemetryEnabled, telemetryAsked: true })),
+    },
     { separator: true },
     { title: t('menu.fontText'), children: fontSubmenu('fontFamily') },
     { title: t('menu.fontCode'), children: fontSubmenu('codeFontFamily') },
@@ -372,8 +413,14 @@ async function buildMenu(): Promise<void> {
         modifiers: ['Command', 'Option'],
         action: () => { openSettingsMenu(); },
       },
+      {
+        title: t('menu.reportBug'),
+        action: () => { void askReportBug(); },
+      },
     ],
   });
+
+  void askTelemetryOnce();
 }
 
 void buildMenu();

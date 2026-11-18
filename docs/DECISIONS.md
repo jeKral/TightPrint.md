@@ -97,3 +97,25 @@ Evidence rozhodnutí, aby se k nim dalo kdykoliv vrátit. Nový záznam přidáv
   skutečnou první verzi** — `package.json`/`CHANGELOG.md`/GitHub Release zůstávají tak, jak je
   `semantic-release` vytvořil; další verze se počítají normálně od `v1.0.0`. `docs/GITHUB-SETUP.md`
   upraveno podle toho (krok "založit v0.1.1" odstraněn).
+
+## 2026-11-18 — Hlášení chyb a anonymní statistiky (implementace)
+- Dokončena implementace podle architektury v `docs/TELEMETRY-AND-REPORTING.md`:
+  `src/telemetry.ts` (`sendStat`, `reportBug`, relay přes `MarkEdit.runService('TightPrint
+  Relay', …)`), nové pole v `src/config.ts` (`telemetryEnabled`, `telemetryAsked`, `anonId`),
+  zapojení do `src/main.ts` (jednorázový dialog při prvním spuštění, přepínač v Nastavení
+  tisku, položka "Nahlaš chybu…" v hlavním menu, `sendStat('export', …)` po úspěšném
+  save/print), i18n klíče v `cs.json`/`en.json`.
+- **Výchozí stav telemetrie: VYPNUTO (opt-in)**, ne zapnuto, jak dokument původně navrhoval
+  ("doporučuju zapnuto"). Důvod změny: bezpečnější výchozí hodnota pro první veřejné vydání —
+  nikoho nepřekvapí tiše běžící telemetrie, i anonymizovaná. `docs/TELEMETRY-AND-REPORTING.md`
+  a `docs/PRIVACY.md` aktualizovány, aby to odpovídalo kódu (`DEFAULTS.telemetryEnabled:
+  false`). Pokud by se ukázalo, že účast je příliš nízká, jde to změnit jedním boolean/textem,
+  ne architektonicky.
+- Backend (`backend/`) napsán jako samostatná Node/Express služba (Postgres přes `pg`,
+  `express-rate-limit`, Docker + docker-compose) — `/report` vytváří GitHub issue přes REST API
+  s fine-grained PAT (`Issues: write` jen na `jeKral/TightPrint.md`), `/stat` zapisuje do
+  tabulky `stats`, kterou čte Grafana. Nasazení na roztisk-srvr zůstává na Janovi (viz
+  `backend/README.md`) — tahle session nemá k roztisk-srvr přístup.
+- `docs/SHORTCUT-SETUP.md` napsán jako manuální návod (krok za krokem v macOS Zkratkách),
+  protože `.shortcut` binární soubor nejde vygenerovat mimo macOS a tenhle projekt se vyvíjí
+  v Linuxovém kontejneru — proto žádný hotový `.shortcut` ke stažení, jen návod.
