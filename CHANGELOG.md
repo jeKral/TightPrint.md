@@ -1,3 +1,8 @@
+## 1.1.0 (2026-11-18)
+
+* feat: add bug reporting and opt-in anonymized telemetry ([1707ef4](https://github.com/jeKral/TightPrint.md/commit/1707ef4))
+* docs: accept v1.0.0 as the real first release [skip ci] ([72bf83b](https://github.com/jeKral/TightPrint.md/commit/72bf83b))
+
 ## 1.0.0 (2026-11-18)
 
 * docs: log menu UX fix and GitHub-proxy write restrictions ([eaf90c7](https://github.com/jeKral/TightPrint.md/commit/eaf90c7))
