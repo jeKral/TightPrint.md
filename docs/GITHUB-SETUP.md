@@ -12,34 +12,28 @@ připojený GitHub App/token v samotné organizaci:
   "Repository settings writes are not permitted through this proxy."
 
 Push commitů a branchí (`git push origin main`) naopak **funguje normálně** —
-proto je `main` už na GitHubu, ale tag `v0.1.1` a repo-nastavení níž ne.
-Tohle nejsou chybějící oprávnění (repo hlásí `admin: true`), je to
-záměrné omezení toho, co agent v této session může na GitHubu měnit —
-podrobnosti: <https://docs.anthropic.com/en/docs/claude-code/github-actions>.
+proto je `main` už na GitHubu. Tohle nejsou chybějící oprávnění (repo hlásí
+`admin: true`), je to záměrné omezení toho, co agent v této session může na
+GitHubu měnit — podrobnosti:
+<https://docs.anthropic.com/en/docs/claude-code/github-actions>.
 
 Proto je potřeba tyhle kroky udělat buď přímo v GitHub UI, nebo z vlastního
 terminálu (s `gh auth login` nebo osobním tokenem, mimo tuhle proxy).
 
-## 1. Založit tag `v0.1.1` (nejdůležitější — bez něj semantic-release při
-   prvním běhu skočí rovnou na `1.0.0`, ne na `0.1.1`)
+## Verze: první release vyšel jako v1.0.0, ne v0.1.1
 
-**Buď z terminálu** (po `git pull` aktuálního `main`):
+Při prvním běhu `.github/workflows/release.yml` vytvořil `semantic-release`
+automaticky tag a release **`v1.0.0`** — to je jeho pevné chování pro "žádný
+předchozí release" (bez ohledu na typ commitu). Tag `v0.1.1`, se kterým se
+původně počítalo, se nestihl založit dřív (zápis tagů je přes tuhle proxy
+blokovaný stejně jako repo-nastavení níž), takže se do GitHubu dostalo
+rovnou `v1.0.0`. Jan se rozhodl tenhle výsledek přijmout jako skutečnou
+první verzi — `package.json`, `CHANGELOG.md` i GitHub Release na `v1.0.0`
+zůstávají tak, jak je `semantic-release` vytvořil. Od teď bude každá další
+verze počítaná normálně od `v1.0.0` podle Conventional Commits u commitů na
+`main` — žádný další manuální zásah kolem verzování není potřeba.
 
-```bash
-git fetch origin
-git tag -a v0.1.1 origin/main -m "v0.1.1 — initial release"
-git push origin v0.1.1
-```
-
-**Nebo v GitHub UI:** *Releases → Draft a new release → v poli "Choose a
-tag" napiš `v0.1.1` a potvrď "Create new tag: v0.1.1 on publish" → Target:
-`main` → Publish release.*
-
-Od tohoto okamžiku bude `semantic-release` (viz `.github/workflows/release.yml`)
-počítat každou další verzi od `v0.1.1` podle Conventional Commits u
-commitů na `main` — žádný další manuální zásah už nebude potřeba.
-
-## 2. Zapnout Discussions
+## 1. Zapnout Discussions
 
 Repo má Wiki, Issues a Projects zapnuté už z výchozího nastavení GitHubu.
 Discussions ne — zapnutí:
@@ -50,7 +44,7 @@ gh api repos/jeKral/TightPrint.md -X PATCH -f has_discussions=true
 
 nebo *Settings → General → Features → zaškrtnout Discussions*.
 
-## 3. Branch protection na `main`
+## 2. Branch protection na `main`
 
 Vynutit, aby šlo na `main` pushovat jen přes CI check (commitlint +
 typecheck + smoke + build) a zakázat force-push/mazání branche:
@@ -72,7 +66,7 @@ nebo *Settings → Branches → Add branch protection rule → `main`*, zaškrtn
 "Require status checks to pass" (vybrat `release`) a "Do not allow force
 pushes"/"Do not allow deletions".
 
-## 4. (Volitelné) Nastavit `GH_TOKEN` pro bug-report backend
+## 3. (Volitelné) Nastavit `GH_TOKEN` pro bug-report backend
 
 Jakmile vznikne backend pro „Nahlaš chybu" (viz
 `docs/TELEMETRY-AND-REPORTING.md`), bude potřeba jemně omezený GitHub

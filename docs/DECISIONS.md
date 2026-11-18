@@ -89,3 +89,11 @@ Evidence rozhodnutí, aby se k nim dalo kdykoliv vrátit. Nový záznam přidáv
   `HEAD~20` neexistuje na repu s jedním commitem — opraveno na `git rev-list --max-parents=0
   HEAD` (kořenový commit) a Node v workflow zvýšen na 22 (kvůli `jsdom`/`undici`). Oprava
   pushnuta s `[skip ci]`, aby mezitím nenaskočil nechtěný release.
+- Po opravě ale `semantic-release` při svém prvním doopravdy proběhlém běhu (na `docs:` commitu)
+  i tak automaticky vytvořil **`v1.0.0`**, ne `v0.1.1` — jeho pevné chování: bez existujícího
+  tagu je první verze vždy `1.0.0`, bez ohledu na typ commitu. `v0.1.1` se nestihlo založit
+  předem (tagy přes tuhle proxy nejde pushnout, viz výš), smazání `v1.0.0` by navíc byla
+  destruktivní akce, kterou auto mode zablokoval. **Jan se rozhodl `v1.0.0` přijmout jako
+  skutečnou první verzi** — `package.json`/`CHANGELOG.md`/GitHub Release zůstávají tak, jak je
+  `semantic-release` vytvořil; další verze se počítají normálně od `v1.0.0`. `docs/GITHUB-SETUP.md`
+  upraveno podle toho (krok "založit v0.1.1" odstraněn).
