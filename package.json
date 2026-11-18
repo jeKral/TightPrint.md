@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/jeKral/TightPrint.md.git"
   },
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "TightPrint.md: paper-saving Markdown to PDF/print with minimal margins and spacing (MarkEdit plugin first)",
   "private": true,
   "type": "module",

@@ -1,3 +1,7 @@
+## <small>1.1.1 (2026-11-18)</small>
+
+* fix: read plugin version from package.json at build time ([9a06377](https://github.com/jeKral/TightPrint.md/commit/9a06377))
+
 ## 1.1.0 (2026-11-18)
 
 * feat: add bug reporting and opt-in anonymized telemetry ([1707ef4](https://github.com/jeKral/TightPrint.md/commit/1707ef4))
